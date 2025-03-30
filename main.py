@@ -1,10 +1,6 @@
-from fastapi import FastAPI
-from src.controllers import test_controller
+import uvicorn
+from src.app import app
 
-app = FastAPI()
 
-app.include_router(test_controller.router)
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello, FastAPI with Docker!"}
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, forwarded_allow_ips="*")
