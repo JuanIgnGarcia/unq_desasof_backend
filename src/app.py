@@ -3,10 +3,15 @@ from src.controllers.test_controller import router as test_router
 #from src.controllers.user_controller import router as user_router
 from src.controllers.mercadolibre_controller import router as ml_router
 
+from src.service.database import engine
+from src.model.test import Base
+
 app = FastAPI(
-    title="No-Conv-Grafos",
+    title="UNQ-STC",
     description="",
 )
+
+Base.metadata.create_all(engine)
 
 app.include_router(test_router, prefix="/test")
 #app.include_router(user_router, prefix="/user")
