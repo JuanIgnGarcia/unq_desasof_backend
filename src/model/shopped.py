@@ -10,8 +10,10 @@ class Shopped(Base):
     amount = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
     product_id = Column(String, ForeignKey("products.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users_buyer.id")) 
 
     product = relationship("Product", backref="shopped")
+    user = relationship("UserBuyer", back_populates="shopped_items") 
 
     def __init__(self, amount: int, price: float, product_id: str):
         if amount <= 0:

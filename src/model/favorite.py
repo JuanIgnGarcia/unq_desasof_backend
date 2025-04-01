@@ -9,8 +9,10 @@ class Favorite(Base):
     score = Column(Integer, nullable=False)
     comment = Column(String, nullable=True)
     product_id = Column(String, ForeignKey("products.id"), nullable=False)
-
+    user_id = Column(Integer, ForeignKey("users_buyer.id"))  
+    
     product = relationship("Product", backref="favorites")
+    user = relationship("UserBuyer", back_populates="favorites")  
 
     def __init__(self, score: int, comment: str | None, product_id: str):
         if not (0 <= score <= 10):
