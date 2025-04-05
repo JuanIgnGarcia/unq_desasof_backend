@@ -7,17 +7,19 @@ from src.request.user_request import UserRequest
 
 router = APIRouter()
 
-@router.post("/admin", response_model=UserAdminRequest)
+service = UserService(get_db)
+
+@router.post("/admin", response_model=UserRequest)
 def create_admin(user_request: UserAdminRequest, db: Session = Depends(get_db)):
-    service = UserService(db)
+    service.set_session(db)
     return service.create_user_admin(user_request)
 
-@router.post("/buyer", response_model=UserBuyerRequest)
+@router.post("/buyer", response_model=UserRequest)
 def create_buyer(user_request: UserBuyerRequest, db: Session = Depends(get_db)):
-    service = UserService(db)
+    service.set_session(db)
     return service.create_user_buyer(user_request)
 
 @router.get("/", response_model=list[UserRequest])
 def get_all_users(db: Session = Depends(get_db)):
-    service = UserService(db)
+    service.set_session(db)
     return service.get_all_users()
