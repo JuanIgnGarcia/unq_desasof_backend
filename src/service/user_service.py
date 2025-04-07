@@ -5,8 +5,9 @@ from src.model.user_buyer import UserBuyer
 from src.model.user import User
 from src.model.favorite import Favorite
 from src.model.product import Product
-from src.request.user_request import UserRequest
+from src.model.shopped import Shopped
 from src.request.favorite_request import FavoriteRequest
+from src.request.shopped_request import ShoppedRequest
 from src.respond.favorite_response import FavoriteResponse
 
 class UserService:
@@ -30,6 +31,9 @@ class UserService:
 
     def get_all_users(self):
         return self.db.query(User).all()
+    
+    def get_all_buyers(self):
+        return self.db.query(UserBuyer).all()
 
     def add_favorite(self, user_id: int, favorite_request: FavoriteRequest):
         user = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
@@ -45,7 +49,7 @@ class UserService:
                 id=favorite_request.product_id,
                 title=favorite_request.product_title,                                  
                 price=favorite_request.product_price,                                   
-                currency=favorite_request.product_currency, #"ARS"                      
+                currency=favorite_request.product_currency,                       
                 url=favorite_request.product_url
             )
             self.db.add(product)
@@ -70,3 +74,39 @@ class UserService:
         )
 
         return favorite_response
+    
+
+    def get_buyers(self,user_id:int):
+        return self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
+    
+    def buy_product(self, user_id: int, shopped_request: ShoppedRequest):
+        user = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"UserBuyer with id {user_id} not found"
+            )
+
+        product = self.db.query(Product).filter(Product.id == shopped_request.product_id).first()
+        if product is None:
+            product = Product(
+                id=shopped_request.product_id,
+                title=shopped_request.product_title,                                  
+                price=shopped_request.product_price,                                   
+                currency=shopped_request.product_currency,                       
+                url=shopped_request.product_url
+            )
+            self.db.add(product)
+            self.db.commit()
+            self.db.refresh(product)
+
+        shopped = Shopped(amount=shopped_request.amount,
+                          price=shopped_request.price,
+                          product_id=shopped_request.product_id)
+        
+        user.shopped_items.append(shopped)
+        self.db.add(shopped)
+        self.db.commit()
+        self.db.refresh(shopped)
+
+        return shopped_request
