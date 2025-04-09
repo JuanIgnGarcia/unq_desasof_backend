@@ -12,8 +12,8 @@ app = FastAPI(
     description="",
 )
 
-Base.metadata.drop_all(bind=engine)  # elim las tablas existentes ---> Sacar en un futuro 
-Base.metadata.create_all(bind=engine)  # crea las nuevas tablas
+#Base.metadata.drop_all(bind=engine)  # elim las tablas existentes ---> Sacar en un futuro 
+#Base.metadata.create_all(bind=engine)  # crea las nuevas tablas
 
 app.include_router(ml_router, prefix="/ml", tags=["MercadoLibre"])
 app.include_router(user_router, prefix="/user",tags=["User"])
