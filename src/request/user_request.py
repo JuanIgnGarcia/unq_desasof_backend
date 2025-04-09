@@ -1,4 +1,3 @@
-from sqlalchemy import Integer
 from pydantic import BaseModel
 from typing import List, Optional
 from src.request.favorite_request import FavoriteRequest
