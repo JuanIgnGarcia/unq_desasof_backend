@@ -7,7 +7,7 @@ from src.request.shopped_request import ShoppedRequest
 from src.respond.user_response import UserResponse,UserAdminResponse,UserBuyerResponse
 from src.respond.favorite_response import FavoriteResponse
 from src.respond.shopped_response import ShoppedResponse
-
+from src.respond.top_user_response import TopUserResponse
 
 router = APIRouter()
 
@@ -47,3 +47,8 @@ def get_buyer(user_id:int,db: Session = Depends(get_db)):
 def buy_product(user_id:int,shopped_request: ShoppedRequest, db: Session = Depends(get_db)):
     service.set_session(db)
     return service.buy_product(user_id,shopped_request)
+
+@router.get("/top5/shopped", response_model=list[TopUserResponse])
+def top_5_users_with_most_purchases(db: Session = Depends(get_db)):
+    service.set_session(db)
+    return service.top_5_users_with_most_purchases()

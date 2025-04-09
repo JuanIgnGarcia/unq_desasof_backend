@@ -82,7 +82,21 @@ INSERT INTO favorites (score, comment, product_id, user_id) VALUES
 
 INSERT INTO shopped (amount, price, product_id, user_id) VALUES
 (2, 799.99, 'MLA1', (SELECT id FROM users WHERE username = 'buyer1')),
+(1, 1500.00, 'MLA2', (SELECT id FROM users WHERE username = 'buyer1')),
+(1, 199.99, 'MLA3', (SELECT id FROM users WHERE username = 'buyer1')),
+(1, 3500.00, 'MLA4', (SELECT id FROM users WHERE username = 'buyer1')),
+
 (1, 1500.00, 'MLA2', (SELECT id FROM users WHERE username = 'buyer2')),
+(1, 599.00, 'MLA7', (SELECT id FROM users WHERE username = 'buyer2')),
+
 (3, 199.99, 'MLA3', (SELECT id FROM users WHERE username = 'buyer3')),
+(2, 599.00, 'MLA7', (SELECT id FROM users WHERE username = 'buyer3')),
+
+(2, 199.99, 'MLA3', (SELECT id FROM users WHERE username = 'buyer4')),
 (1, 3500.00, 'MLA4', (SELECT id FROM users WHERE username = 'buyer4')),
-(4, 89.50, 'MLA5', (SELECT id FROM users WHERE username = 'buyer6'));
+
+(4, 89.50, 'MLA5', (SELECT id FROM users WHERE username = 'buyer6')),
+(2, 1200.00, 'MLA8', (SELECT id FROM users WHERE username = 'buyer6')),
+(1, 300.00, 'MLA10', (SELECT id FROM users WHERE username = 'buyer6')),
+
+(1, 250.00, 'MLA6', (SELECT id FROM users WHERE username = 'buyer8'));
