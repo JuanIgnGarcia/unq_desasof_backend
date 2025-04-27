@@ -1,8 +1,6 @@
 from sqlalchemy import ForeignKey,Column,Integer
 from sqlalchemy.orm import relationship
 from src.model.user import User
-from src.model.favorite import Favorite
-from src.model.shopped import Shopped
 
 class UserBuyer(User):
     __tablename__ = "users_buyer"

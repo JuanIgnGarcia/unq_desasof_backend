@@ -1,14 +1,9 @@
 from pydantic import BaseModel, Field
-from typing import Optional
 
-class ShoppedRequest(BaseModel):
+class ShoppedResponse(BaseModel):
     amount: int = Field(..., gt=0)  
     price: float = Field(..., ge=0)  
     product_id: str 
-    product_title: str
-    product_price: float
-    product_currency: str
-    product_url: Optional[str]
 
     class Config:
         from_attributes = True
