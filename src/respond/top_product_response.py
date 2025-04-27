@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class TopProductResponse(BaseModel):
-    id: str
+    id: int
     title: str
     url: str
     total_purchases: int

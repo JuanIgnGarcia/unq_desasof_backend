@@ -1,10 +1,9 @@
 from pydantic import BaseModel
 
 class ProductRequest(BaseModel):
-    id: str  
+    id: int
+    id_ml: str  
     title: str
-    price: float
-    currency: str
     url: str | None = None  
 
     class Config:

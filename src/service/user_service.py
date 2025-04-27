@@ -51,9 +51,8 @@ class UserService:
         if product is None:
             product = Product(
                 id=favorite_request.product_id,
-                title=favorite_request.product_title,                                  
-                price=favorite_request.product_price,                                   
-                currency=favorite_request.product_currency,                       
+                id_ML=favorite_request.product_id_ml,
+                title=favorite_request.product_title,                                                     
                 url=favorite_request.product_url
             )
             self.db.add(product)
@@ -95,9 +94,8 @@ class UserService:
         if product is None:
             product = Product(
                 id=shopped_request.product_id,
-                title=shopped_request.product_title,                                  
-                price=shopped_request.product_price,                                   
-                currency=shopped_request.product_currency,                       
+                id_ML=shopped_request.product_id_ml,
+                title=shopped_request.product_title,                                                      
                 url=shopped_request.product_url
             )
             self.db.add(product)

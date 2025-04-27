@@ -8,7 +8,7 @@ class Favorite(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     score = Column(Integer, nullable=False)
     comment = Column(String, nullable=True)
-    product_id = Column(String, ForeignKey("products.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users_buyer.id"))  
     
     product = relationship("Product", backref="favorites")

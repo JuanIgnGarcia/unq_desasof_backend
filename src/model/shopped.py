@@ -9,7 +9,7 @@ class Shopped(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     amount = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
-    product_id = Column(String, ForeignKey("products.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users_buyer.id")) 
 
     product = relationship("Product", backref="shopped")
