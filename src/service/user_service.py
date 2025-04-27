@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
 from src.model.user_admin import UserAdmin
 from src.model.user_buyer import UserBuyer
@@ -9,6 +10,7 @@ from src.model.shopped import Shopped
 from src.request.favorite_request import FavoriteRequest
 from src.request.shopped_request import ShoppedRequest
 from src.respond.favorite_response import FavoriteResponse
+from src.respond.top_user_response import TopUserResponse
 
 class UserService:
     def __init__(self, db: Session):
@@ -110,3 +112,26 @@ class UserService:
         self.db.refresh(shopped)
 
         return shopped_request
+
+    def top_5_users_with_most_purchases(self) -> list[TopUserResponse]:
+        results = (
+            self.db.query(
+                User.id,
+                User.username,
+                func.sum(Shopped.amount).label("total_purchases")
+            )
+            .join(Shopped, User.id == Shopped.user_id)
+            .group_by(User.id)
+            .order_by(desc("total_purchases"))
+            .limit(5)
+            .all()
+        )
+
+        return [
+            TopUserResponse(
+                id=user_id,
+                username=username,
+                total_purchases=total_purchases
+            )
+            for user_id, username, total_purchases in results
+        ]
