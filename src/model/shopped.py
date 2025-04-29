@@ -16,10 +16,10 @@ class Shopped(Base):
     user = relationship("UserBuyer", back_populates="shopped_items") 
 
     def __init__(self, amount: int, price: float, product_id: str):
-        if amount < 0:
+        if amount <= 0:
             raise ValueError("Amount must be greater than 0")
-        if price < 0:
-            raise ValueError("Price must be 0 or more")
+        if price <= 0:
+            raise ValueError("Price must be greater than 0")
         self.amount = amount
         self.price = price
         self.product_id = product_id
