@@ -51,7 +51,7 @@ class UserService:
         if product is None:
             product = Product(
                 id=favorite_request.product_id,
-                id_ML=favorite_request.product_id_ml,
+                id_ml=favorite_request.product_id_ml,
                 title=favorite_request.product_title,                                                     
                 url=favorite_request.product_url
             )
@@ -79,8 +79,8 @@ class UserService:
         return favorite_response
     
 
-    def get_buyers(self,user_id:int):
-        return self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
+    def get_buyers(self,buyer_id:int):
+        return self.db.query(UserBuyer).filter(UserBuyer.id == buyer_id).first()
     
     def buy_product(self, user_id: int, shopped_request: ShoppedRequest):
         user = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
@@ -94,7 +94,7 @@ class UserService:
         if product is None:
             product = Product(
                 id=shopped_request.product_id,
-                id_ML=shopped_request.product_id_ml,
+                id_ml=shopped_request.product_id_ml,
                 title=shopped_request.product_title,                                                      
                 url=shopped_request.product_url
             )

@@ -41,9 +41,9 @@ def add_favorite(user_id:int,favorite_request: FavoriteRequest, db: Session = De
     return service.add_favorite(user_id,favorite_request)
 
 @router.get("/buyer/{buyer_id}", response_model=UserBuyerResponse)
-def get_buyer(user_id:int,db: Session = Depends(get_db)):
+def get_buyer(buyer_id:int,db: Session = Depends(get_db)):
     service.set_session(db)
-    return service.get_buyers(user_id)
+    return service.get_buyers(buyer_id)
 
 @router.post("/buy/{user_id}", response_model=ShoppedResponse)
 def buy_product(user_id:int,shopped_request: ShoppedRequest, db: Session = Depends(get_db)):
