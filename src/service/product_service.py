@@ -9,7 +9,7 @@ class ProductService:
     def save_product(self, product_request: ProductRequest):
         existing_product = self.db.query(Product).filter_by(mercado_libre_id=product_request.mercado_libre_id).first()
         if existing_product:
-            return existing_product  # Evita duplicados
+            return existing_product
 
         new_product = Product(
             mercado_libre_id=product_request.mercado_libre_id,

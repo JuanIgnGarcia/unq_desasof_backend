@@ -10,7 +10,6 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_DB=testdb
 
-
   tests:
     build:
       context: .
