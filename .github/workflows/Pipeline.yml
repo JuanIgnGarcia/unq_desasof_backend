@@ -16,21 +16,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:14-alpine
-        ports:
-          - 5434:5432
-        env:
-          POSTGRES_DB: testdb
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-        options: >-
-          --health-cmd="pg_isready -U root -d testdb"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -38,5 +23,5 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build and run tests
-        run: docker-compose -f docker-compose-test.yml up --abort-on-container-exit --exit-code-from tests
+      - name: Build and run tests with docker compose
+        run: docker compose -f docker-compose-test.yml up --abort-on-container-exit --exit-code-from tests
