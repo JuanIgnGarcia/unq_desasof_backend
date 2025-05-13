@@ -1,14 +1,7 @@
-import pytest
-from fastapi.testclient import TestClient
-from src.app import app
-from src.service.database import get_db
-
 from src.model.user_buyer import UserBuyer
 from src.model.shopped import Shopped
 from src.model.product import Product
 from src.model.favorite import Favorite
-
-
 
 def test_create_admin(client):
     response = client.post("/user/admin", params={"username": "admin1", "password": "secure123"})

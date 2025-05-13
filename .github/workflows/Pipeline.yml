@@ -13,26 +13,49 @@ on:
       - testing
 
 jobs:
-  build:
-    name: Run tests
+  test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd="pg_isready -U root"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     strategy:
       matrix:
         python-version: ["3.11"]
 
     steps:
-      - uses: szenius/set-timezone@v1.2
-        with:
-          timezoneLinux: "Europe/Berlin"
       - uses: actions/checkout@v3
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Install dependencies
-        run: pip install pytest pytest-md pytest-emoji
-      - uses: pavelzw/pytest-action@v2
-        with:
-          emoji: false
-          verbose: false
-          job-summary: true
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-emoji pytest-md SQLAlchemy psycopg2-binary fastapi uvicorn
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h localhost -p 5432 -U root; do
+            sleep 1
+          done
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://root:root@localhost:5432/testdb
+        run: |
+          pytest tests/ --maxfail=1 --disable-warnings -q

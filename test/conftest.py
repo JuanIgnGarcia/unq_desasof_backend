@@ -6,12 +6,6 @@ from fastapi.testclient import TestClient
 from src.service.database import Base,get_db
 from src.app import app  
 
-from src.model.user_buyer import User,UserBuyer
-from src.model.user_admin import UserAdmin
-from src.model.shopped import  Shopped
-from src.model.favorite import Favorite
-from src.model.product import Product
-
 
 #from sqlalchemy.ext.declarative import declarative_base
 #Base = declarative_base()
