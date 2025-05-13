@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-emoji pytest-md SQLAlchemy psycopg2-binary fastapi uvicorn
+          pip install -r requirements.txt
 
       - name: Wait for PostgreSQL to be ready
         run: |
