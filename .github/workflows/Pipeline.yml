@@ -54,6 +54,9 @@ jobs:
             sleep 1
           done
 
+      - name: Add project root to PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
+
       - name: Run tests
         env:
           DATABASE_URL: postgresql://root:root@localhost:5432/testdb
