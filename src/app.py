@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from src.controllers.user_controller import router as user_router
 from src.controllers.mercadolibre_controller import router as ml_router
 from src.controllers.product_controller import router as product_router
@@ -23,6 +25,15 @@ app.include_router(user_router, prefix="/user",tags=["User"])
 app.include_router(product_router, prefix="/product",tags=["Product"])
 app.include_router(favorite_router,prefix="/favorites", tags=["favorites"])
 app.include_router(shopped_router,prefix="/shopped", tags=["shopped"]) 
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ajusta para producción
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health", tags=["Health"])
 async def health_check():
