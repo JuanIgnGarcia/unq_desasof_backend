@@ -13,6 +13,8 @@ services:
       - DATABASE_URL=postgresql://root:root@db:5432/dbstc
     depends_on:
       - db
+    networks:
+      - backend
 
   db:
     image: postgres:14-alpine
@@ -25,3 +27,19 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=dbstc
+    networks:
+      - backend
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - backend
+    depends_on:
+      - app
+
+networks:
+  backend:

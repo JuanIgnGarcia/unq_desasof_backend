@@ -4,6 +4,7 @@ from src.controllers.mercadolibre_controller import router as ml_router
 from src.controllers.product_controller import router as product_router
 from src.controllers.favorite_controller import router as favorite_router
 from src.controllers.shopped_controller import router as shopped_router
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from src.service.database import engine,Base
 
@@ -11,6 +12,8 @@ app = FastAPI(
     title="UNQ-STC",
     description="",
 )
+
+Instrumentator().instrument(app).expose(app)
 
 #Base.metadata.drop_all(bind=engine)  # elim las tablas existentes ---> Sacar en un futuro 
 #Base.metadata.create_all(bind=engine)  # crea las nuevas tablas
