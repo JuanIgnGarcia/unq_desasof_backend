@@ -40,41 +40,41 @@ def create_buyer(username: str, password: str, db: Session = Depends(get_db)):
     return service.create_user_buyer(username,password)
 
 @router.get("/all", response_model=list[UserResponse])
-def get_all_users(db: Session = Depends(get_db),token: str = Depends(verify_token)):
+def get_all_users(db: Session = Depends(get_db), username: str = Depends(verify_token)):
     service.set_session(db)
     return service.get_all_users()
 
 @router.get("/buyers", response_model=list[UserResponse])
-def get_all_buyers(db: Session = Depends(get_db),token: str = Depends(verify_token)):
+def get_all_buyers(db: Session = Depends(get_db), username: str = Depends(verify_token)):
     service.set_session(db)
     return service.get_all_buyers()
 
 @router.post("/addFavorite/{user_id}", response_model=FavoriteResponse)
-def add_favorite(user_id:int,favorite_request: FavoriteRequest, db: Session = Depends(get_db)):
+def add_favorite(user_id:int,favorite_request: FavoriteRequest, db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.add_favorite(user_id,favorite_request)
 
 @router.get("/buyer/{buyer_id}", response_model=UserBuyerResponse)
-def get_buyer(buyer_id:int,db: Session = Depends(get_db)):
+def get_buyer(buyer_id:int,db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.get_buyers(buyer_id)
 
 @router.post("/buy/{user_id}", response_model=ShoppedResponse)
-def buy_product(user_id:int,shopped_request: ShoppedRequest, db: Session = Depends(get_db)):
+def buy_product(user_id:int,shopped_request: ShoppedRequest, db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.buy_product(user_id,shopped_request)
 
 @router.get("/top5/users", response_model=list[TopUserResponse])
-def top_5_users_with_most_purchases(db: Session = Depends(get_db)):
+def top_5_users_with_most_purchases(db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.top_5_users_with_most_purchases()
 
 @router.get("/top5/shopped", response_model=list[TopProductResponse])
-def top_5_most_shopped_product(db: Session = Depends(get_db)):
+def top_5_most_shopped_product(db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.top_5_most_shopped_product()
 
 @router.get("/top5/favorites", response_model=list[TopFavoritesResponse])
-def top_5_most_favorite_product(db: Session = Depends(get_db)):
+def top_5_most_favorite_product(db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.top_5_most_favorite_product()

@@ -1,13 +1,13 @@
 # src/service/auth.py
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
-from datetime import datetime
-from src.security.auth import SECRET_KEY, ALGORITHM  #  cambiar mas tarde en secrets de github
+from src.security.auth import SECRET_KEY, ALGORITHM  # cambiar más tarde en secrets de GitHub
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+security = HTTPBearer()
 
-def verify_token(token: str = Depends(oauth2_scheme)):
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
