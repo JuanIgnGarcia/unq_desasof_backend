@@ -30,14 +30,14 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
     return service.login(request.username,request.password)
 
 @router.post("/admin", response_model=RegisterResponse)
-def create_admin(username: str, password: str, db: Session = Depends(get_db)):
+def create_admin(request: LoginRequest, db: Session = Depends(get_db)):
     service.set_session(db)
-    return service.create_user_admin(username,password)
+    return service.create_user_admin(request.username,request.password)
 
 @router.post("/buyer", response_model=RegisterResponse)
-def create_buyer(username: str, password: str, db: Session = Depends(get_db)):
+def create_buyer(request: LoginRequest, db: Session = Depends(get_db)):
     service.set_session(db)
-    return service.create_user_buyer(username,password)
+    return service.create_user_buyer(request.username,request.password)
 
 @router.get("/all", response_model=list[UserResponse])
 def get_all_users(db: Session = Depends(get_db), username: str = Depends(verify_token)):

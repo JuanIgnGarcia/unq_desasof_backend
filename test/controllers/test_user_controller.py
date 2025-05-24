@@ -4,22 +4,22 @@ from src.model.product import Product
 from src.model.favorite import Favorite
 
 def test_create_admin(client):
-    response = client.post("/user/admin", params={"username": "admin1", "password": "secure123"})
+    response = client.post("/user/admin", json={"username": "admin1", "password": "secure123"})
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
     assert "token" in data
 
 def test_create_buyer(client):
-    response = client.post("/user/buyer", params={"username": "buyer1", "password": "pass456"})
+    response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
     assert "token" in data
 
 def test_get_all_buyers(client):
-    client.post("/user/buyer", params={"username": "buyer1", "password": "pass456"})
-    register_response = client.post("/user/buyer", params={"username": "buyer2", "password": "pass789"})
+    client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
+    register_response = client.post("/user/buyer", json={"username": "buyer2", "password": "pass789"})
 
     token = register_response.json()["token"]
 
@@ -34,7 +34,7 @@ def test_get_all_buyers(client):
     assert all("id" in buyer and "username" in buyer for buyer in data)
 
 def test_add_favorite(client):
-    create_response = client.post("/user/buyer", params={"username": "buyer1", "password": "pass456"})
+    create_response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
     
     user_id = create_response.json()["id"]
     token = create_response.json()["token"]
@@ -59,7 +59,7 @@ def test_add_favorite(client):
     assert data["comment"] == example_favorite_request["comment"]
 
 def test_get_buyer(client):
-    create_response = client.post("/user/buyer", params={"username": "buyer1", "password": "pass456"})
+    create_response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
     
     buyer_id = create_response.json()["id"]
     token = create_response.json()["token"]
@@ -74,7 +74,7 @@ def test_get_buyer(client):
     assert "shopped_items" in data
 
 def test_buy_product(client):
-    create_response = client.post("/user/buyer", params={"username": "buyer1", "password": "pass456"})
+    create_response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
     
     user_id = create_response.json()["id"]
     token = create_response.json()["token"]
