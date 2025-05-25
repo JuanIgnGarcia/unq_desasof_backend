@@ -1,12 +1,7 @@
 import httpx
 from typing import Any, Dict
 import asyncio
-
-BASE_URL = "https://api.mercadolibre.com"
-
-CLIENT_ID = "3412107547103922"
-CLIENT_SECRET = ""
-REFRESH_TOKEN = "TG-67e9767012e3950001e2a587-286882810"
+from config import BASE_URL,CLIENT_ID,CLIENT_SECRET,REFRESH_TOKEN
 
 class MercadoLibreService:
     _access_token: str = ""

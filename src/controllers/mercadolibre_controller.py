@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 import httpx
 from src.service.mercadolibre_service import MercadoLibreService
 
-# Borrar en un futuro 
+
 router = APIRouter()
 
 mercadolibre_service = MercadoLibreService()
