@@ -11,6 +11,7 @@ from src.request.favorite_request import FavoriteRequest
 from src.request.shopped_request import ShoppedRequest
 from src.respond.favorite_response import FavoriteResponse
 from src.respond.top_user_response import TopUserResponse
+from src.respond.top_product_response import TopProductResponse
 
 class UserService:
     def __init__(self, db: Session):
@@ -134,4 +135,29 @@ class UserService:
                 total_purchases=total_purchases
             )
             for user_id, username, total_purchases in results
+        ]
+
+    def top_5_most_shopped_product(self) -> list[TopProductResponse]:
+        results = (
+            self.db.query(
+                Product.id,
+                Product.title,
+                Product.url,
+                func.sum(Shopped.amount).label("total_purchases")
+            )
+            .join(Shopped, Product.id == Shopped.product_id)
+            .group_by(Product.id)
+            .order_by(desc("total_purchases"))
+            .limit(5)
+            .all()
+        )
+
+        return [
+            TopProductResponse(
+                id=product_id,
+                title=title,
+                url=url,
+                total_purchases=total_purchases
+            )
+            for product_id, title, url, total_purchases in results
         ]
