@@ -24,6 +24,10 @@ jobs:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: root
           POSTGRES_DB: testdb
+
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
         options: >-
           --health-cmd="pg_isready -U root"
           --health-interval=10s
