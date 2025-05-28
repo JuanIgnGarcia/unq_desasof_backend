@@ -6,7 +6,6 @@ env/
 ENV/
 .venv/
 .ENV/
-config.py
 pytest_cache/
 postgres-data/
 postgres-test-data/
