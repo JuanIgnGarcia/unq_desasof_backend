@@ -42,15 +42,36 @@ class MercadoLibreService:
             return response.json()
 
 
-    async def search_items(self, query: str) -> Dict[str, Any]:
-        url = f"{BASE_URL}/sites/MLA/search"
-        params = {"q": query}
+    async def search_products(self, query: str) -> Dict[str, Any]:
+        url = f"{BASE_URL}/products/search"
+        params = {
+            "status": "active",
+            "site_id": "MLA",
+            "q": query
+        }
         headers = await self._get_headers()
+
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params, headers=headers)
-            if response.status_code == 401 or response.status_code == 403 :
+            if response.status_code in (401, 403):
                 await self._refresh_token()
                 headers = await self._get_headers()
                 response = await client.get(url, params=params, headers=headers)
+
             response.raise_for_status()
-            return response.json()
+            raw_data = response.json()
+
+            simplified_results = [
+                {
+                    "id": item.get("id"),
+                    "name": item.get("name"),
+                    "date_created": item.get("date_created"),
+                    "domain_id": item.get("domain_id"),
+                    "pictures": item.get("pictures"),
+                }
+                for item in raw_data.get("results", [])
+            ]
+
+            return {"query": query, "results": simplified_results}
+
+     

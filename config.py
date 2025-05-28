@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ML
 BASE_URL = "https://api.mercadolibre.com"
