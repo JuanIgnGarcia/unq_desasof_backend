@@ -75,10 +75,21 @@ INSERT INTO products (id, title, price, currency, url) VALUES
 
 INSERT INTO favorites (score, comment, product_id, user_id) VALUES
 (9, 'Muy buen producto', 'MLA1', (SELECT id FROM users WHERE username = 'buyer1')),
+(7, 'Buen producto', 'MLA3', (SELECT id FROM users WHERE username = 'buyer1')),
+
 (7, 'Cumple con lo esperado', 'MLA2', (SELECT id FROM users WHERE username = 'buyer2')),
+(10, 'Excelente producto', 'MLA1', (SELECT id FROM users WHERE username = 'buyer2')),
+(9, 'Muy buen producto', 'MLA3', (SELECT id FROM users WHERE username = 'buyer2')),
+
 (10, 'Excelente calidad', 'MLA3', (SELECT id FROM users WHERE username = 'buyer3')),
-(8, NULL, 'MLA4', (SELECT id FROM users WHERE username = 'buyer4')),
-(6, 'Podría ser mejor', 'MLA5', (SELECT id FROM users WHERE username = 'buyer5'));
+
+(7, NULL, 'MLA4', (SELECT id FROM users WHERE username = 'buyer4')),
+(10, 'Excelente producto', 'MLA1', (SELECT id FROM users WHERE username = 'buyer4')),
+(8, NULL, 'MLA5', (SELECT id FROM users WHERE username = 'buyer4')),
+
+(8, NULL, 'MLA5', (SELECT id FROM users WHERE username = 'buyer5')),
+(10, NULL, 'MLA9', (SELECT id FROM users WHERE username = 'buyer5')),
+(6, NULL, 'MLA10', (SELECT id FROM users WHERE username = 'buyer5'));
 
 INSERT INTO shopped (amount, price, product_id, user_id) VALUES
 (2, 799.99, 'MLA1', (SELECT id FROM users WHERE username = 'buyer1')),

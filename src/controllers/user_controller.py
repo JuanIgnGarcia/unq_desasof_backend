@@ -9,6 +9,7 @@ from src.respond.favorite_response import FavoriteResponse
 from src.respond.shopped_response import ShoppedResponse
 from src.respond.top_user_response import TopUserResponse
 from src.respond.top_product_response import TopProductResponse
+from src.respond.top_favorite_response import TopFavoritesResponse
 
 router = APIRouter()
 
@@ -58,3 +59,8 @@ def top_5_users_with_most_purchases(db: Session = Depends(get_db)):
 def top_5_most_shopped_product(db: Session = Depends(get_db)):
     service.set_session(db)
     return service.top_5_most_shopped_product()
+
+@router.get("/top5/favorites", response_model=list[TopFavoritesResponse])
+def top_5_most_favorite_product(db: Session = Depends(get_db)):
+    service.set_session(db)
+    return service.top_5_most_favorite_product()
