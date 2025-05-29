@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 import httpx
 from src.service.mercadolibre_service import MercadoLibreService
 
-# Borrar en un futuro 
+
 router = APIRouter()
 
 mercadolibre_service = MercadoLibreService()
@@ -16,9 +16,8 @@ async def get_ml_item(item_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/search")
-async def search_ml_items(query: str):
+async def search_ml_products(query: str):
     try:
-        results = await mercadolibre_service.search_items(query)
-        return results
+        return await mercadolibre_service.search_products(query)
     except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Error al consultar MercadoLibre: {str(e)}")

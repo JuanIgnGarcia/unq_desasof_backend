@@ -1,4 +1,7 @@
 from fastapi import HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from src.security.auth import create_access_token, verify_password,get_password_hash
+
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
 from src.model.user_admin import UserAdmin
@@ -13,6 +16,7 @@ from src.respond.favorite_response import FavoriteResponse
 from src.respond.top_user_response import TopUserResponse
 from src.respond.top_product_response import TopProductResponse
 from src.respond.top_favorite_response import TopFavoritesResponse
+from src.respond.register_response import RegisterResponse
 
 class UserService:
     def __init__(self, db: Session):
@@ -21,17 +25,33 @@ class UserService:
     def set_session(self,db: Session):
         self.db = db
 
+    def login(self,username: str, password: str): 
+        user = self.db.query(User).filter(User.username == username).first()
+        if not user or not verify_password(password, user.password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Credenciales incorrectas",
+            )
+        
+        token = create_access_token(data={"sub": user.username})
+        return RegisterResponse(id=user.id,token=token)
+
     def create_user_admin(self, username: str, password: str):
-        user = UserAdmin(username=username, password=password)
+        hashed_password = get_password_hash(password)
+        user = UserAdmin(username=username, password=hashed_password)
         self.db.add(user)
         self.db.commit()
-        return user
+        token = create_access_token(data={"sub": user.username})
+        return RegisterResponse(id=user.id,token=token)
+
 
     def create_user_buyer(self, username: str, password: str):
-        user = UserBuyer(username=username, password=password)
+        hashed_password = get_password_hash(password)
+        user = UserBuyer(username=username, password=hashed_password)
         self.db.add(user)
         self.db.commit()
-        return user
+        token = create_access_token(data={"sub": user.username})
+        return RegisterResponse(id=user.id,token=token)
 
     def get_all_users(self):
         return self.db.query(User).all()
@@ -51,7 +71,7 @@ class UserService:
         if product is None:
             product = Product(
                 id=favorite_request.product_id,
-                id_ML=favorite_request.product_id_ml,
+                id_ml=favorite_request.product_id_ml,
                 title=favorite_request.product_title,                                                     
                 url=favorite_request.product_url
             )
@@ -79,8 +99,8 @@ class UserService:
         return favorite_response
     
 
-    def get_buyers(self,user_id:int):
-        return self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
+    def get_buyers(self,buyer_id:int):
+        return self.db.query(UserBuyer).filter(UserBuyer.id == buyer_id).first()
     
     def buy_product(self, user_id: int, shopped_request: ShoppedRequest):
         user = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
@@ -94,7 +114,7 @@ class UserService:
         if product is None:
             product = Product(
                 id=shopped_request.product_id,
-                id_ML=shopped_request.product_id_ml,
+                id_ml=shopped_request.product_id_ml,
                 title=shopped_request.product_title,                                                      
                 url=shopped_request.product_url
             )

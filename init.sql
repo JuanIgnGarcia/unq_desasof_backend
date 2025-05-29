@@ -39,22 +39,22 @@ CREATE TABLE IF NOT EXISTS shopped (
 );
 
 INSERT INTO users (username, password, type) VALUES
-('admin1', 'admin1pass', 'admin'),
-('admin2', 'admin2pass', 'admin'),
-('admin3', 'admin3pass', 'admin');
+('admin1', '$2b$12$wVEHwWx/UaXrOASx9cC7xOH1lBPXMq4Urqi2qxfG6qBoT7YzXdx2G', 'admin'),
+('admin2', '$2b$12$FA4ANebjRH4xMKuuiUcnp.K/Q.KN8upEUY0lPLrwZ4cBkPyzopWxy', 'admin'),
+('admin3', '$2b$12$Mt.QBFOLcnuaQA0jCFGpMuEX7n3OyiPlb9CWtFM9CEfRJMzwab3Z2', 'admin');
 
 INSERT INTO users_admin (id)
 SELECT id FROM users WHERE username IN ('admin1', 'admin2', 'admin3');
 
 INSERT INTO users (username, password, type) VALUES
-('buyer1', 'buyer1pass', 'buyer'),
-('buyer2', 'buyer2pass', 'buyer'),
-('buyer3', 'buyer3pass', 'buyer'),
-('buyer4', 'buyer4pass', 'buyer'),
-('buyer5', 'buyer5pass', 'buyer'),
-('buyer6', 'buyer6pass', 'buyer'),
-('buyer7', 'buyer7pass', 'buyer'),
-('buyer8', 'buyer8pass', 'buyer');
+('buyer1', '$2b$12$ql35CKQ7k/t57KSm1jroC.NHNBo3iKZzYqf0swykTJne488fOG5Sa', 'buyer'),
+('buyer2', '$2b$12$pHLp7fZjufdHyJDEIrmHl.5tzfoiRPw0rSSZuLjfjA2D2mYxBrod2', 'buyer'),
+('buyer3', '$2b$12$NYBFJv3LVUkARSdeO4d38eQHAfU9IHYmIO8KzjEVEXtxuoOOPqVcu', 'buyer'),
+('buyer4', '$2b$12$Zk92UjkoCTb5OpW7E9zS8uRzeZxc7Yhc.UUheBZMs8Ruchgi8IODW', 'buyer'),
+('buyer5', '$2b$12$idTJ3gIltQ.yd8BRS6QRieXWIpHUoneXMPgk2Y7JzUIsnd0uNJaE2', 'buyer'),
+('buyer6', '$2b$12$ZMkj/s8w5PYIPcZpPSrXBeYMX6GB1IzTkkMMiE7taeJKL5Bv21/Ym', 'buyer'),
+('buyer7', '$2b$12$BLzgI46yG/znDB6Dc7fZlOaXmh.5pF2AOggux0a5yodAGM4P/EI52', 'buyer'),
+('buyer8', '$2b$12$rJwXq8uoqMRd2omIh1Y4xuZ1I78N0EMgqCNSqNOA8hXycfR4bXZSS', 'buyer');
 
 INSERT INTO users_buyer (id)
 SELECT id FROM users WHERE username IN (
