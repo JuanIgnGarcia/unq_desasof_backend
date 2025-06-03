@@ -17,13 +17,13 @@ async def test_search_ml_products_success():
                 "name": "Celular XYZ",
                 "date_created": "2023-01-01T00:00:00Z",
                 "domain_id": "MLA-CELLPHONES",
-                "pictures": [{"url": "http://image.com/img1.jpg"}]
+                "pictures": [{"url": "https://image.com/img1.jpg"}]
             }
         ]
     }
 
     with patch("src.service.mercadolibre_service.MercadoLibreService.search_products", new=AsyncMock(return_value=mock_response)):
-        async with AsyncClient(app=app, base_url="http://test") as ac:
+        async with AsyncClient(app=app, base_url="https://test") as ac:
             response = await ac.get("/search", params={"query": "celular"})
 
     assert response.status_code == 200
@@ -35,7 +35,7 @@ async def test_search_ml_products_failure():
     "src.service.mercadolibre_service.MercadoLibreService.search_products",
     new=AsyncMock(side_effect=HTTPError("falló"))
 ):
-        async with AsyncClient(app=app, base_url="http://test") as ac:
+        async with AsyncClient(app=app, base_url="https://test") as ac:
             response = await ac.get("/search", params={"query": "celular"})
 
     assert response.status_code == 500
