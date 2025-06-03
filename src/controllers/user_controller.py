@@ -9,8 +9,10 @@ from src.request.shopped_request import ShoppedRequest
 from src.request.login_request import LoginRequest
 
 from src.respond.user_response import UserResponse,UserBuyerResponse
+from src.respond.favorite_simple_response import FavoriteSimpleResponse
 from src.respond.favorite_response import FavoriteResponse
 from src.respond.shopped_response import ShoppedResponse
+from src.respond.shopped_simple_response import ShoppedSimpleResponse
 from src.respond.top_user_response import TopUserResponse
 from src.respond.top_product_response import TopProductResponse
 from src.respond.top_favorite_response import TopFavoritesResponse
@@ -49,7 +51,7 @@ def get_all_buyers(db: Session = Depends(get_db), username: str = Depends(verify
     service.set_session(db)
     return service.get_all_buyers()
 
-@router.post("/addFavorite/{user_id}", response_model=FavoriteResponse)
+@router.post("/addFavorite/{user_id}", response_model=FavoriteSimpleResponse)
 def add_favorite(user_id:int,favorite_request: FavoriteRequest, db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.add_favorite(user_id,favorite_request)
@@ -59,7 +61,7 @@ def get_buyer(buyer_id:int,db: Session = Depends(get_db),username: str = Depends
     service.set_session(db)
     return service.get_buyers(buyer_id)
 
-@router.post("/buy/{user_id}", response_model=ShoppedResponse)
+@router.post("/buy/{user_id}", response_model=ShoppedSimpleResponse)
 def buy_product(user_id:int,shopped_request: ShoppedRequest, db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.buy_product(user_id,shopped_request)
@@ -78,3 +80,13 @@ def top_5_most_shopped_product(db: Session = Depends(get_db),username: str = Dep
 def top_5_most_favorite_product(db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.top_5_most_favorite_product()
+
+@router.get("/favorite/{buyer_id}", response_model=list[FavoriteResponse])
+def get_buyer_favorites(buyer_id:int, db: Session = Depends(get_db),username: str = Depends(verify_token)):
+    service.set_session(db)
+    return service.get_buyer_favorites(buyer_id)
+
+@router.get("/shopped/{buyer_id}", response_model=list[ShoppedResponse])
+def get_buyer_favorites(buyer_id:int, db: Session = Depends(get_db),username: str = Depends(verify_token)):
+    service.set_session(db)
+    return service.get_buyer_shopped(buyer_id)

@@ -12,11 +12,13 @@ from src.model.product import Product
 from src.model.shopped import Shopped
 from src.request.favorite_request import FavoriteRequest
 from src.request.shopped_request import ShoppedRequest
+from src.respond.favorite_simple_response import FavoriteSimpleResponse
 from src.respond.favorite_response import FavoriteResponse
 from src.respond.top_user_response import TopUserResponse
 from src.respond.top_product_response import TopProductResponse
 from src.respond.top_favorite_response import TopFavoritesResponse
 from src.respond.register_response import RegisterResponse
+from src.respond.shopped_response import ShoppedResponse
 
 class UserService:
     def __init__(self, db: Session):
@@ -67,10 +69,9 @@ class UserService:
                 detail=f"UserBuyer with id {user_id} not found"
             )
 
-        product = self.db.query(Product).filter(Product.id == favorite_request.product_id).first()
+        product = self.db.query(Product).filter(Product.id_ml == favorite_request.product_id_ml).first()
         if product is None:
             product = Product(
-                id=favorite_request.product_id,
                 id_ml=favorite_request.product_id_ml,
                 title=favorite_request.product_title,                                                     
                 url=favorite_request.product_url
@@ -89,7 +90,7 @@ class UserService:
         self.db.commit()
         self.db.refresh(new_favorite)
 
-        favorite_response = FavoriteResponse(
+        favorite_response = FavoriteSimpleResponse(
             id=new_favorite.id,
             score=new_favorite.score,
             comment=new_favorite.comment,
@@ -110,10 +111,9 @@ class UserService:
                 detail=f"UserBuyer with id {user_id} not found"
             )
 
-        product = self.db.query(Product).filter(Product.id == shopped_request.product_id).first()
+        product = self.db.query(Product).filter(Product.id_ml == shopped_request.product_id_ml).first()
         if product is None:
             product = Product(
-                id=shopped_request.product_id,
                 id_ml=shopped_request.product_id_ml,
                 title=shopped_request.product_title,                                                      
                 url=shopped_request.product_url
@@ -124,14 +124,14 @@ class UserService:
 
         shopped = Shopped(amount=shopped_request.amount,
                           price=shopped_request.price,
-                          product_id=shopped_request.product_id)
+                          product_id=product.id)
         
         user.shopped_items.append(shopped)
         self.db.add(shopped)
         self.db.commit()
         self.db.refresh(shopped)
 
-        return shopped_request
+        return shopped
 
     def top_5_users_with_most_purchases(self) -> list[TopUserResponse]:
         results = (
@@ -205,3 +205,19 @@ class UserService:
             )
             for row in results
         ]
+    
+    def get_buyer_favorites(self,buyer_id) -> list[FavoriteResponse]:
+        buyer = self.db.query(UserBuyer).filter(UserBuyer.id == buyer_id).first()
+        
+        if not buyer:
+            raise HTTPException(status_code=404, detail="Buyer not found")
+        
+        return buyer.favorites
+    
+    def get_buyer_shopped(self,buyer_id) -> list[ShoppedResponse]:
+        buyer = self.db.query(UserBuyer).filter(UserBuyer.id == buyer_id).first()
+        
+        if not buyer:
+            raise HTTPException(status_code=404, detail="Buyer not found")
+        
+        return buyer.shopped_items
