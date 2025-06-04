@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 class ProductRequest(BaseModel):
-    id: int
     id_ml: str  
     title: str
     url: str | None = None  

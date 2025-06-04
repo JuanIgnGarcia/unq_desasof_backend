@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from src.respond.favorite_response import FavoriteResponse
-from src.respond.shopped_response import ShoppedResponse
+from src.respond.favorite_simple_response import FavoriteSimpleResponse
+from src.respond.shopped_simple_response import ShoppedSimpleResponse
 
 
 class UserResponse(BaseModel):
@@ -12,5 +12,5 @@ class UserAdminResponse(UserResponse):
     pass  
 
 class UserBuyerResponse(UserResponse):
-    favorites: Optional[List[FavoriteResponse]] = []
-    shopped_items: Optional[List[ShoppedResponse]] = []
+    favorites: Optional[List[FavoriteSimpleResponse]] = []
+    shopped_items: Optional[List[ShoppedSimpleResponse]] = []
