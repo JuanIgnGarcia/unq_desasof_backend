@@ -113,18 +113,24 @@ class UserService:
 
         product = self.db.query(Product).filter(Product.id_ml == shopped_request.product_id_ml).first()
         if product is None:
-            product = Product(
+            print(f"Producto con id_ml {shopped_request.product_id_ml} no encontrado. Creando nuevo producto...")
+            print(f" id_ml= {shopped_request.product_id_ml}, title={shopped_request.product_title},url={shopped_request.product_url}")
+            product = Product(  
                 id_ml=shopped_request.product_id_ml,
                 title=shopped_request.product_title,                                                      
                 url=shopped_request.product_url
             )
+            print(f"Producto creado pero no perisitido con id {product.id}")
             self.db.add(product)
             self.db.commit()
             self.db.refresh(product)
+            print(f"Producto creado con id {product.id}")
 
-        shopped = Shopped(amount=shopped_request.amount,
-                          price=shopped_request.price,
-                          product_id=product.id)
+        shopped = Shopped(   
+            amount=shopped_request.amount,
+            price=shopped_request.price,
+            product_id=product.id,
+            )
         
         user.shopped_items.append(shopped)
         self.db.add(shopped)
@@ -221,3 +227,13 @@ class UserService:
             raise HTTPException(status_code=404, detail="Buyer not found")
         
         return buyer.shopped_items
+    
+    def is_admin(self,user_id) -> bool:
+        user = self.db.query(User).filter(User.id == user_id).first()
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="user not found")
+        
+        admin = self.db.query(UserAdmin).filter(UserAdmin.id == user_id).first()
+
+        return admin is not None
