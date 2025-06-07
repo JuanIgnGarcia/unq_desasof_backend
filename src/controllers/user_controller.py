@@ -90,3 +90,8 @@ def get_buyer_favorites(buyer_id:int, db: Session = Depends(get_db),username: st
 def get_buyer_favorites(buyer_id:int, db: Session = Depends(get_db),username: str = Depends(verify_token)):
     service.set_session(db)
     return service.get_buyer_shopped(buyer_id)
+
+@router.get("/isAdmin/{user_id}", response_model= bool)
+def is_admin(user_id:int, db: Session = Depends(get_db),username: str = Depends(verify_token)):
+    service.set_session(db)
+    return service.is_admin(user_id)

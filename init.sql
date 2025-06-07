@@ -14,11 +14,9 @@ CREATE TABLE IF NOT EXISTS users_buyer (
 );
 
 CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY,
-    id_ml VARCHAR,
+    id SERIAL PRIMARY KEY,
+    id_ml VARCHAR UNIQUE NOT NULL,
     title VARCHAR NOT NULL,
-    price FLOAT NOT NULL,
-    currency VARCHAR NOT NULL,
     url VARCHAR
 );
 
@@ -62,17 +60,17 @@ SELECT id FROM users WHERE username IN (
   'buyer5', 'buyer6', 'buyer7', 'buyer8'
 );
 
-INSERT INTO products (id,id_ml, title, price, currency, url) VALUES
-(51,'MLA1', 'Celular Samsung Galaxy', 799.99, 'ARS', 'URL1'),
-(52,'MLA2', 'Notebook HP 15"', 1500.00, 'ARS', 'URL2'),
-(53,'MLA3', 'Auriculares Bluetooth', 199.99, 'ARS', 'URL3'),
-(54,'MLA4', 'Smart TV 50 pulgadas', 3500.00, 'ARS', 'URL4'),
-(55,'MLA5', 'Mouse inalámbrico', 89.50, 'ARS', 'URL5'),
-(56,'MLA6', 'Teclado mecánico RGB', 250.00, 'ARS', 'URL6'),
-(57,'MLA7', 'Parlante portátil JBL', 599.00, 'ARS', 'URL7'),
-(58,'MLA8', 'Monitor LG 24"', 1200.00, 'ARS', 'URL8'),
-(59,'MLA9', 'Tablet Lenovo 10"', 999.99, 'ARS', 'URL9'),
-(60,'MLA10', 'Cámara web HD', 300.00, 'ARS', 'URL10');
+INSERT INTO products (id,id_ml, title, url) VALUES
+(51,'MLA1', 'Celular Samsung Galaxy', 'URL1'),
+(52,'MLA2', 'Notebook HP 15"', 'URL2'),
+(53,'MLA3', 'Auriculares Bluetooth', 'URL3'),
+(54,'MLA4', 'Smart TV 50 pulgadas', 'URL4'),
+(55,'MLA5', 'Mouse inalámbrico', 'URL5'),
+(56,'MLA6', 'Teclado mecánico RGB', 'URL6'),
+(57,'MLA7', 'Parlante portátil JBL', 'URL7'),
+(58,'MLA8', 'Monitor LG 24"', 'URL8'),
+(59,'MLA9', 'Tablet Lenovo 10"', 'URL9'),
+(60,'MLA10', 'Cámara web HD', 'URL10');
 
 INSERT INTO favorites (score, comment, product_id, user_id) VALUES
 (9, 'Muy buen producto', 51, (SELECT id FROM users WHERE username = 'buyer1')),
