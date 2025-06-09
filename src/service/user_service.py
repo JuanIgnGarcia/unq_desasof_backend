@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from src.security.auth import create_access_token, verify_password,get_password_hash
+from src.security.auth import create_access_token, verify_password,get_password_hash,decode_access_token
 
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
@@ -35,16 +35,17 @@ class UserService:
                 detail="Credenciales incorrectas",
             )
         
-        token = create_access_token(data={"sub": user.username})
-        return RegisterResponse(id=user.id,token=token)
+        token = create_access_token(data={"user_id": user.id})
+        return RegisterResponse(token=token)
 
     def create_user_admin(self, username: str, password: str):
         hashed_password = get_password_hash(password)
         user = UserAdmin(username=username, password=hashed_password)
         self.db.add(user)
         self.db.commit()
-        token = create_access_token(data={"sub": user.username})
-        return RegisterResponse(id=user.id,token=token)
+        self.db.refresh(user)
+        token = create_access_token(data={"user_id": user.id})
+        return RegisterResponse(token=token)
 
 
     def create_user_buyer(self, username: str, password: str):
@@ -52,8 +53,9 @@ class UserService:
         user = UserBuyer(username=username, password=hashed_password)
         self.db.add(user)
         self.db.commit()
-        token = create_access_token(data={"sub": user.username})
-        return RegisterResponse(id=user.id,token=token)
+        self.db.refresh(user)
+        token = create_access_token(data={"user_id": user.id})
+        return RegisterResponse(token=token)
 
     def get_all_users(self):
         return self.db.query(User).all()
@@ -212,8 +214,8 @@ class UserService:
             for row in results
         ]
     
-    def get_buyer_favorites(self,buyer_id) -> list[FavoriteResponse]:
-        buyer = self.db.query(UserBuyer).filter(UserBuyer.id == buyer_id).first()
+    def get_buyer_favorites(self,user_id) -> list[FavoriteResponse]:
+        buyer = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
         
         if not buyer:
             raise HTTPException(status_code=404, detail="Buyer not found")
