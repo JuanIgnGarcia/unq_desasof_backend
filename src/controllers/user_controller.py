@@ -56,6 +56,11 @@ def add_favorite(favorite_request: FavoriteRequest, db: Session = Depends(get_db
     service.set_session(db)
     return service.add_favorite(user_id,favorite_request)
 
+@router.post("/elimineFavorite")
+def elimine_favorite(product_id_ml:str, db: Session = Depends(get_db),user_id: int = Depends(verify_token)):
+    service.set_session(db)
+    return service.elimine_favorite(user_id,product_id_ml)
+
 @router.get("/buyer/me", response_model=UserBuyerResponse)
 def get_buyer(db: Session = Depends(get_db),user_id: int = Depends(verify_token)):
     service.set_session(db)
@@ -95,3 +100,8 @@ def get_buyer_shopped( db: Session = Depends(get_db),user_id: int = Depends(veri
 def is_admin(db: Session = Depends(get_db),user_id: int = Depends(verify_token)):
     service.set_session(db)
     return service.is_admin(user_id)
+
+@router.get("/isFavorite", response_model= bool)
+def is_favorite(product_id_ml:str, db: Session = Depends(get_db),user_id: int = Depends(verify_token)):
+    service.set_session(db)
+    return service.is_favorite(user_id,product_id_ml)
