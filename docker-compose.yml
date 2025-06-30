@@ -36,6 +36,22 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data:/prometheus
+    restart: unless-stopped
+    networks:
+      - backend
+    depends_on:
+      - app
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "4000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    #password: root123
     networks:
       - backend
     depends_on:
@@ -43,3 +59,9 @@ services:
 
 networks:
   backend:
+
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
