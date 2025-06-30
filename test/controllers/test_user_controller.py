@@ -45,7 +45,7 @@ def test_add_favorite(client):
         "product_title": "test",
         "product_url": "ULR_test"
     }
-    response = client.post(f"/user/addFavorite", json=example_favorite_request,headers=headers)
+    response = client.post("/user/addFavorite", json=example_favorite_request,headers=headers)
     
     assert response.status_code == 200
 
@@ -60,7 +60,7 @@ def test_get_buyer(client):
     token = create_response.json()["token"]
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = client.get(f"/user/buyer/me",headers=headers)
+    response = client.get("/user/buyer/me",headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
@@ -83,7 +83,7 @@ def test_buy_product(client):
         "product_url": "ULR_test"
     }
 
-    response = client.post(f"/user/buy", json=example_shopped_request,headers=headers)
+    response = client.post("/user/buy", json=example_shopped_request,headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data["amount"] == example_shopped_request["amount"]
