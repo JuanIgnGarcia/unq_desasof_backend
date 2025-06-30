@@ -7,14 +7,12 @@ def test_create_admin(client):
     response = client.post("/user/admin", json={"username": "admin1", "password": "secure123"})
     assert response.status_code == 200
     data = response.json()
-    assert "id" in data
     assert "token" in data
 
 def test_create_buyer(client):
     response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
     assert response.status_code == 200
     data = response.json()
-    assert "id" in data
     assert "token" in data
 
 def test_get_all_buyers(client):
@@ -35,8 +33,6 @@ def test_get_all_buyers(client):
 
 def test_add_favorite(client):
     create_response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
-    
-    user_id = create_response.json()["id"]
     token = create_response.json()["token"]
 
     headers = {"Authorization": f"Bearer {token}"}
@@ -49,7 +45,7 @@ def test_add_favorite(client):
         "product_title": "test",
         "product_url": "ULR_test"
     }
-    response = client.post(f"/user/addFavorite/{user_id}", json=example_favorite_request,headers=headers)
+    response = client.post("/user/addFavorite", json=example_favorite_request,headers=headers)
     
     assert response.status_code == 200
 
@@ -61,14 +57,13 @@ def test_add_favorite(client):
 def test_get_buyer(client):
     create_response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
     
-    buyer_id = create_response.json()["id"]
     token = create_response.json()["token"]
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = client.get(f"/user/buyer/{buyer_id}",headers=headers)
+    response = client.get("/user/buyer/me",headers=headers)
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == buyer_id
+    assert "id" in data
     assert data["username"] == "buyer1"
     assert "favorites" in data
     assert "shopped_items" in data
@@ -76,7 +71,6 @@ def test_get_buyer(client):
 def test_buy_product(client):
     create_response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
     
-    user_id = create_response.json()["id"]
     token = create_response.json()["token"]
     headers = {"Authorization": f"Bearer {token}"}
     
@@ -89,7 +83,7 @@ def test_buy_product(client):
         "product_url": "ULR_test"
     }
 
-    response = client.post(f"/user/buy/{user_id}", json=example_shopped_request,headers=headers)
+    response = client.post("/user/buy", json=example_shopped_request,headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data["amount"] == example_shopped_request["amount"]
@@ -248,7 +242,63 @@ def test_top_5_most_favorite_product(client, session):
         assert "url" in product
         assert "total_favorites" in product
 
+def test_is_admin_buyer(client, session):
+    create_response = client.post("/user/buyer", json={"username": "buyer1", "password": "pass456"})
+    token = create_response.json()["token"]
 
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/user/isAdmin",headers=headers)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data == False
+
+def test_is_admin_admin(client):
+    create_response = client.post("/user/admin", json={"username": "admin1", "password": "pass456"})
+    token = create_response.json()["token"]
+
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/user/isAdmin",headers=headers)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data == True
+
+def test_get_buyer_shopped(client, session):
+    create_products_with_shoppings(session)
+    login_response = client.post("/user/login", json={"username": "buyer_top", "password": "pass123"})
+    
+    token = login_response.json()["token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.get("/user/shopped",headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) == 6
+    for shopped in data:
+        assert "amount" in shopped
+        assert "price" in shopped
+        assert "product_id" in shopped
+        assert "product" in shopped
+
+def test_get_buyer_favorites(client, session):
+    create_products_with_favorites(session)
+    login_response = client.post("/user/login", json={"username": "fav_buyer", "password": "pass123"})
+    
+    token = login_response.json()["token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.get("/user/favorite",headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) == 15
+    for favorite in data:
+        assert "id" in favorite
+        assert "score" in favorite
+        assert "comment" in favorite
+        assert "product" in favorite
 
 # TO DO :
 #   - CREAR Admin con el mismo username 

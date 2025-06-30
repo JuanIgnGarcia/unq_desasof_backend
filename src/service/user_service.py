@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
-from src.security.auth import create_access_token, verify_password,get_password_hash
+from src.security.auth import create_access_token, verify_password,get_password_hash,decode_access_token
 
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
@@ -35,16 +36,17 @@ class UserService:
                 detail="Credenciales incorrectas",
             )
         
-        token = create_access_token(data={"sub": user.username})
-        return RegisterResponse(id=user.id,token=token)
+        token = create_access_token(data={"user_id": user.id})
+        return RegisterResponse(token=token)
 
     def create_user_admin(self, username: str, password: str):
         hashed_password = get_password_hash(password)
         user = UserAdmin(username=username, password=hashed_password)
         self.db.add(user)
         self.db.commit()
-        token = create_access_token(data={"sub": user.username})
-        return RegisterResponse(id=user.id,token=token)
+        self.db.refresh(user)
+        token = create_access_token(data={"user_id": user.id})
+        return RegisterResponse(token=token)
 
 
     def create_user_buyer(self, username: str, password: str):
@@ -52,8 +54,9 @@ class UserService:
         user = UserBuyer(username=username, password=hashed_password)
         self.db.add(user)
         self.db.commit()
-        token = create_access_token(data={"sub": user.username})
-        return RegisterResponse(id=user.id,token=token)
+        self.db.refresh(user)
+        token = create_access_token(data={"user_id": user.id})
+        return RegisterResponse(token=token)
 
     def get_all_users(self):
         return self.db.query(User).all()
@@ -73,12 +76,28 @@ class UserService:
         if product is None:
             product = Product(
                 id_ml=favorite_request.product_id_ml,
-                title=favorite_request.product_title,                                                     
+                title=favorite_request.product_title,
                 url=favorite_request.product_url
             )
             self.db.add(product)
             self.db.commit()
             self.db.refresh(product)
+
+        existing_favorite = self.db.query(Favorite).filter(Favorite.user_id == user_id, Favorite.product_id == product.id).first()
+
+        if existing_favorite:
+            existing_favorite.score = favorite_request.score
+            existing_favorite.comment = favorite_request.comment
+            self.db.commit()
+            self.db.refresh(existing_favorite)
+
+            favorite_response = FavoriteSimpleResponse(
+                id=existing_favorite.id,
+                score=existing_favorite.score,
+                comment=existing_favorite.comment,
+                product_id=product.id,
+            )
+            return favorite_response
 
         new_favorite = Favorite(
             score=favorite_request.score,
@@ -98,6 +117,27 @@ class UserService:
         )
 
         return favorite_response
+    
+    def elimine_favorite(self, user_id: int, product_id_ml: str):
+        user = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"UserBuyer with id {user_id} not found"
+            )
+
+        product = self.db.query(Product).filter(Product.id_ml == product_id_ml).first()
+
+        if product is None:
+            return JSONResponse(content={"message": "Favorite not found"}, status_code=200)
+        
+        favorite = self.db.query(Favorite).filter(Favorite.user_id == user_id, Favorite.product_id == product.id).first()
+
+        if favorite:
+            self.db.delete(favorite)
+            self.db.commit()
+
+        return JSONResponse(content={"message": "Favorite removed if it existed"}, status_code=200)
     
 
     def get_buyers(self,buyer_id:int):
@@ -212,8 +252,8 @@ class UserService:
             for row in results
         ]
     
-    def get_buyer_favorites(self,buyer_id) -> list[FavoriteResponse]:
-        buyer = self.db.query(UserBuyer).filter(UserBuyer.id == buyer_id).first()
+    def get_buyer_favorites(self,user_id) -> list[FavoriteResponse]:
+        buyer = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
         
         if not buyer:
             raise HTTPException(status_code=404, detail="Buyer not found")
@@ -237,3 +277,24 @@ class UserService:
         admin = self.db.query(UserAdmin).filter(UserAdmin.id == user_id).first()
 
         return admin is not None
+
+
+    def is_favorite(self, user_id: int, product_id_ml: str) -> bool:
+        
+        user = self.db.query(UserBuyer).filter(UserBuyer.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"UserBuyer with id {user_id} not found"
+            )
+
+        product = self.db.query(Product).filter(Product.id_ml == product_id_ml).first()
+       
+        if product is None:
+            return False
+
+        favorite_exists = self.db.query(self.db.query(Favorite).filter(Favorite.user_id == user_id, Favorite.product_id == product.id).exists()).scalar()
+
+        return favorite_exists
+
+

@@ -9,3 +9,4 @@ ENV/
 pytest_cache/
 postgres-data/
 postgres-test-data/
+data
