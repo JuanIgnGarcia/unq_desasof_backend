@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import Counter
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
 
 from src.controllers.user_controller import router as user_router
 from src.controllers.mercadolibre_controller import router as ml_router
@@ -14,6 +18,29 @@ app = FastAPI(
     title="UNQ-STC",
     description="",
 )
+
+http_5xx_responses_total = Counter(
+    "http_5xx_responses_total",
+    "Número total de respuestas HTTP con código 5xx",
+    ["method", "path"]
+)
+
+@app.middleware("http")
+async def count_5xx_responses(request: Request, call_next):
+    try:
+        response = await call_next(request)
+    except Exception:
+        http_5xx_responses_total.labels(
+            method=request.method,
+            path=request.url.path
+        ).inc()
+        raise 
+    if 500 <= response.status_code < 600:
+        http_5xx_responses_total.labels(
+            method=request.method,
+            path=request.url.path
+        ).inc()
+    return response
 
 Instrumentator().instrument(app).expose(app)
 
